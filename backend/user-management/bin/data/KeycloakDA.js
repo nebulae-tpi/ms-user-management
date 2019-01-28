@@ -16,7 +16,6 @@ class KeycloakDA {
     this.tokenTimeSubject$ = new Rx.BehaviorSubject(1000);
   }
 
-
   /**
    * Authenticates with Keycloak and evaluate the expiration time of the token to refresh it
    */
