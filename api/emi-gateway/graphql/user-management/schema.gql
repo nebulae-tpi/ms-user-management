@@ -1,0 +1,135 @@
+enum DocumentType {
+  CITIZENSHIP_CARD
+  PASSPORT
+  FOREIGNER_ID
+}
+
+"User type"
+type User {
+  "User ID"
+  _id: ID!
+  "User general info"
+  generalInfo: UserGeneralInfo
+  "User state"
+  state: Boolean
+  "Data about auth"
+  auth: UserAuth
+  "Roles assigned to the user"
+  roles: [String]
+  "business id of the user"
+  businessId: String!
+}
+
+type UserAuth {
+  "username"
+  username: String!
+  "User keycloak ID"
+  userKeycloakId: String!
+}
+
+"User general info"
+type UserGeneralInfo {
+  "Name"
+  name: String
+  "Lastname"
+  lastname: String
+  "Document type"
+  documentType: DocumentType
+  "Document ID"
+  documentId: String
+  "Email"
+  email: String
+  "Phone"
+  phone: String
+}
+
+type UserRole {
+  id: String!
+  name: String!  
+}
+
+input UserInput {
+  generalInfo: UserGeneralInfoInput!
+  "User state"
+  state: Boolean
+}
+
+input UserGeneralInfoInput {
+  "Name"
+  name: String!
+  "Lastname"
+  lastname: String!
+  "Document type"
+  documentType: String
+  "Document ID"
+  documentId: String
+  "Email"
+  email: String!
+  "Phone"
+  phone: String!
+}
+
+input AuthInput {
+  "username"
+  username: String!
+  "User password"
+  password: String!
+  "User temporary"
+  temporary: Boolean!
+}
+
+input UserPasswordInput {
+  "User password"
+  password: String!
+  "User temporary"
+  temporary: Boolean!
+}
+
+input RoleInput {
+  "Role Name"
+  name: String!
+}
+
+input RolesInput {
+  roles: [String]
+}
+
+type CommandResponse {
+  "Response code"
+  code: Int
+  "Response message"
+  message: String
+}
+
+type Query {
+  "Gets the users "
+  getUsers(page: Int!, count: Int!, searchFilter: String, businessId: String): [User]
+  "Gets a user by its username"
+  getUser(id: String!, businessId: String): User
+  "Gets roles that the petitioner can assign to another users according to its role"
+  getRoles: [String]
+}
+
+type Mutation {
+  "Create a new user"
+  createUser(businessId: String!, input: UserInput!): CommandResponse
+  "Updates the user according to the ID"
+  updateUserGeneralInfo(userId: ID!, input: UserInput!): CommandResponse
+  "Updates the user state"
+  updateUserState(userId: ID!, username: String!, state: Boolean!): CommandResponse
+  "Creates auth for the user"
+  createUserAuth(userId: ID!, username: String!, input: AuthInput): CommandResponse
+  "Removes auth of the user (The user will be deleted from Keycloak)"
+  removeUserAuth(userId: ID!): CommandResponse
+  "Changes user password"
+  resetUserPassword(userId: ID!, input: UserPasswordInput): CommandResponse  
+  "Adds the roles to the user"
+  addRolesToTheUser(userId: ID!, input: RolesInput): CommandResponse
+  "Removes the roles from the user"
+  removeRolesFromUser(userId: ID!, input: RolesInput): CommandResponse
+}
+
+type Subscription {
+  "This events is triggered when a user is created, updated or deleted"
+  UserUpdatedSubscription: User
+}
