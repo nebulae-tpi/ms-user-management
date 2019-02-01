@@ -182,7 +182,6 @@ class UserValidatorHelper {
           return this.checkIfUserBelongsToTheSameBusiness$(user, authToken, method, roles);
         })
         .mergeMap(user => this.checkIfUserIsTheSameUserLogged$(user, authToken))
-        .mergeMap(user => this.checkUsernameExistKeycloak$(user, user.username))
         .mergeMap(user => this.checkUserEmailExistKeycloak$(user, user.email))
     );
   }
@@ -218,6 +217,8 @@ class UserValidatorHelper {
           return this.checkIfUserBelongsToTheSameBusiness$(user, authToken, method,roles);
         })
         .mergeMap(user => this.checkIfUserIsTheSameUserLogged$(user, authToken))
+        //Checks if the username was already used
+        .mergeMap(user => this.checkUsernameExistKeycloak$(user, user.username))
         //Checks if the email already was used
         .mergeMap(user => {
           return this.checkEmailExistKeycloakOrMongo$(null, user.generalInfo.email).mapTo(user);
@@ -338,7 +339,7 @@ class UserValidatorHelper {
    * @returns error if its trying to update its user
    */
   static checkIfUserIsTheSameUserLogged$(user, authToken, method) {
-    if (user._id == authToken.sub) {
+    if (user && user.auth && user.auth.userKeycloakId == authToken.sub) {
       return this.createCustomError$(USER_UPDATE_OWN_INFO_ERROR_CODE, method);
     }
     return Rx.Observable.of(user);

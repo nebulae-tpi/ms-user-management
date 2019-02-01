@@ -183,7 +183,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
           ])
         ],
         passwordConfirmation: ['', Validators.required],
-        temporary: [false, Validators.required]
+        temporary: [true, Validators.required]
       },
       {
         validator: this.checkIfMatchingPasswords(
@@ -251,7 +251,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
       .subscribe(
         model => {
           this.snackBar.open('El usuario ha sido creada', 'Cerrar', {
-            duration: 2000
+            duration: 4000
           });
           this.goToUserDetail();
           // this.businessCreated.emit(this.selectedBusiness);
