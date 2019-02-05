@@ -69,14 +69,14 @@
                       </mat-form-field> -->
 
               <mat-form-field class="w-100-p">
-                <input matInput name="name" formControlName="name" maxlength="40" placeholder="{{'USER.NAME' | translate}}">
+                <input matInput name="name" formControlName="name" maxlength="30" placeholder="{{'USER.NAME' | translate}}">
                 <mat-error *ngIf="userGeneralInfoForm.hasError('required', ['name'])">
                   {{'USER.NAME_REQUIRED' | translate}}
                 </mat-error>
               </mat-form-field>
 
               <mat-form-field class="w-100-p">
-                <input matInput name="lastname" formControlName="lastname" maxlength="40" placeholder="{{'USER.LASTNAME' | translate}}">
+                <input matInput name="lastname" formControlName="lastname" maxlength="30" placeholder="{{'USER.LASTNAME' | translate}}">
                 <mat-error *ngIf="userGeneralInfoForm.hasError('required', ['lastname'])">
                   {{'USER.LASTNAME_REQUIRED' | translate}}
                 </mat-error>
@@ -94,7 +94,7 @@
               </mat-form-field>
 
               <mat-form-field class="w-100-p">
-                <input matInput name="documentId" formControlName="documentId" placeholder="{{'USER.DOCUMENT_ID' | translate}}">
+                <input matInput name="documentId" maxlength="30" formControlName="documentId" placeholder="{{'USER.DOCUMENT_ID' | translate}}">
                 <mat-error *ngIf="userGeneralInfoForm.hasError('required', ['documentId'])">
                   {{'USER.DOCUMENT_ID_REQUIRED' | translate}}
                 </mat-error>
@@ -108,7 +108,7 @@
               </mat-form-field>
 
               <mat-form-field class="w-100-p">
-                <input matInput name="phone" formControlName="phone" maxlength="15" placeholder="{{'USER.PHONE' | translate}}">
+                <input matInput name="phone" type="number" formControlName="phone" maxlength="15" placeholder="{{'USER.PHONE' | translate}}">
                 <mat-error *ngIf="userGeneralInfoForm.hasError('required', ['phone'])">
                   {{'USER.PHONE_REQUIRED' | translate}}
                 </mat-error>
