@@ -44,14 +44,12 @@
     <div class="content-card mat-white-bg">
       <div fxLayout="column" style="width: 100%; justify-content: space-between" fxLayout.gt-sm="row">
         <div fxLayout="column" fxFlex="100" fxFlex.gt-sm="100" fxFlex.gt-md="100">
-          <mat-table id="user-table" class="item-table" #table [dataSource]="dataSource" matSort [@animateStagger]="{ value: '50' }"
+          <mat-table id="user-table" class="item-table" #table [dataSource]="dataSource" [@animateStagger]="{ value: '50' }"
             fusePerfectScrollbar>
 
             <!-- Fullname Column -->
             <ng-container cdkColumnDef="fullname">
-              <mat-header-cell mat-sort-header="fullname" *cdkHeaderCellDef>{{
-                "USER.FULLNAME" | translate
-                }}</mat-header-cell>
+              <mat-header-cell *cdkHeaderCellDef>{{ "USER.FULLNAME" | translate }}</mat-header-cell>
               <mat-cell *cdkCellDef="let user">
                 <p class="text-truncate">
                   {{ user.generalInfo.name }} {{ user.generalInfo.lastname }}
@@ -61,9 +59,7 @@
 
             <!-- Type Column -->
             <ng-container cdkColumnDef="doc_type">
-              <mat-header-cell *cdkHeaderCellDef>{{
-                "USER.DOC_TYPE" | translate
-                }}</mat-header-cell>
+              <mat-header-cell *cdkHeaderCellDef>{{ "USER.DOC_TYPE" | translate }}</mat-header-cell>
               <mat-cell *cdkCellDef="let user">
                 <p class="text-truncate" *ngIf="user.generalInfo.documentType == 'CITIZENSHIP_CARD'">
                   {{ "USER.CITIZENSHIP_CARD" | translate }}
@@ -79,7 +75,7 @@
 
             <!-- Name Column -->
             <ng-container cdkColumnDef="doc_id">
-              <mat-header-cell mat-sort-header="doc_id" *cdkHeaderCellDef>{{ "USER.DOC_ID" | translate }}
+              <mat-header-cell *cdkHeaderCellDef>{{ "USER.DOC_ID" | translate }}
               </mat-header-cell>
               <mat-cell *cdkCellDef="let user">
                 <p class="text-truncate">{{ user.generalInfo.documentId }}</p>
@@ -88,9 +84,7 @@
 
             <!-- Active Column -->
             <ng-container cdkColumnDef="state">
-              <mat-header-cell *cdkHeaderCellDef fxHide fxShow.gt-xs>{{
-                "USER.ACTIVE" | translate
-                }}</mat-header-cell>
+              <mat-header-cell *cdkHeaderCellDef fxHide fxShow.gt-xs>{{ "USER.ACTIVE" | translate }}</mat-header-cell>
               <mat-cell *cdkCellDef="let user" fxHide fxShow.gt-xs>
                 <mat-icon *ngIf="user.state" class="active-icon mat-green-600-bg s-16">check</mat-icon>
                 <mat-icon *ngIf="!user.state" class="active-icon mat-red-500-bg s-16">close</mat-icon>
@@ -99,9 +93,7 @@
 
             <!-- Username Column -->
             <ng-container cdkColumnDef="username">
-              <mat-header-cell mat-sort-header="username" *cdkHeaderCellDef>{{
-                "USER.USERNAME" | translate
-                }}</mat-header-cell>
+              <mat-header-cell *cdkHeaderCellDef>{{ "USER.USERNAME" | translate }}</mat-header-cell>
               <mat-cell *cdkCellDef="let user">
                 <p class="text-truncate">{{ user.auth ? user.auth.username : ''}}</p>
               </mat-cell>
