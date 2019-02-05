@@ -102,7 +102,7 @@
 
               <mat-form-field class="w-100-p">
                 <input matInput name="email" formControlName="email" maxlength="50" placeholder="{{'USER.EMAIL' | translate}}">
-                <mat-error *ngIf="userGeneralInfoForm.hasError('pattern', ['email'])">
+                <mat-error *ngIf="userGeneralInfoForm.hasError('email', ['email'])">
                   {{'USER.EMAIL_FORMAT' | translate}}
                 </mat-error>
               </mat-form-field>

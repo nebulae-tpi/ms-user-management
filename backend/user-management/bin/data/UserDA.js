@@ -179,7 +179,7 @@ class UserDA {
         userKeycloak
       )
     )
-    .catch(error => console.log('Error creating user on Keycloak => ', error));
+    //.catch(error => console.log('Error creating user on Keycloak => ', error));
   }
 
   /**
