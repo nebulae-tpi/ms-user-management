@@ -202,8 +202,7 @@ workflows:
   version: 2.1
   build-and-deploy:
     jobs:
-      - hold-dev:
-          context: TPI
+      #- hold-dev:
       #    type: approval 
       - prepare:
           context: TPI
@@ -216,20 +215,20 @@ workflows:
           name: build-frontend-dev
           requires:
             - prepare
-            - hold-dev
+            #- hold-dev
       - build-api:
           context: TPI
           name: build-api-dev
           requires:
             - prepare
-            - hold-dev
+            #- hold-dev
       - build-backend:
           context: TPI
           name: build-backend-dev
           requires:
             - prepare
             - build-mbinit      
-            - hold-dev
+            #- hold-dev
       - deploy-prod:
           context: TPI
           name: deploy-prod-dev
