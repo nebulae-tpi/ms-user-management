@@ -240,6 +240,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
   createUser() {
     const data: any = {};
     data.generalInfo = this.userGeneralInfoForm.getRawValue();
+    data.generalInfo.phone = data.generalInfo.phone.toString();
     data.state = this.userStateForm.getRawValue().state;
     this.userFormService
       .createUser$(data, this.paramBusinessId)
@@ -268,7 +269,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
   updateUserGeneralInfo() {
     const data: any = {};
     data.generalInfo = this.userGeneralInfoForm.getRawValue();
-
+    data.generalInfo.phone = data.generalInfo.phone.toString();
     this.userFormService
       .updateUserGeneralInfo$(this.user._id, data)
       .pipe(
