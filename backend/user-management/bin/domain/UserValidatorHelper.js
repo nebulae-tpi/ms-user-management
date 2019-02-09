@@ -189,6 +189,8 @@ class UserValidatorHelper {
   //Validates if the user can resset its password
   static validateCreateUserAuth$(data, authToken) {
     const method = "createUserAuth$()";
+
+    console.log('data.args.userId => ', data.args.userId);
     //Validate if the user that is performing the operation has the required role.
     return this.checkRole$(authToken, method)
         .mergeMap(roles => {
@@ -218,7 +220,7 @@ class UserValidatorHelper {
         })
         .mergeMap(user => this.checkIfUserIsTheSameUserLogged$(user, authToken))
         //Checks if the username was already used
-        .mergeMap(user => this.checkUsernameExistKeycloak$(user, user.username))
+        .mergeMap(user => this.checkUsernameExistKeycloak$(user, data.args.username))
         //Checks if the email already was used
         .mergeMap(user => {
           return this.checkEmailExistKeycloakOrMongo$(null, user.generalInfo.email).mapTo(user);
@@ -410,6 +412,7 @@ class UserValidatorHelper {
   static checkUsernameExistKeycloak$(user, username) {
     return UserDA.getUserKeycloak$(username)
     .mergeMap(userFound => {
+      console.log('username => ', username, 'userFound => ', userFound);
        if(userFound && userFound.length > 0){
           return this.createCustomError$(USER_NAME_ALREADY_USED_CODE, 'Error');
         }
