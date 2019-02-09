@@ -186,7 +186,7 @@ class UserValidatorHelper {
     );
   }
 
-  //Validates if the user can resset its password
+  // Validates if the user can resset its password
   static validateCreateUserAuth$(data, authToken) {
     const method = "createUserAuth$()";
 
