@@ -14,6 +14,8 @@ const emiGatewayGraphQlService = require('./services/emi-gateway/GraphQlService'
 const salesGatewayGraphQlService = require('./services/sales-gateway/GraphQlService')();
 const Rx = require('rxjs');
 
+
+
 const start = () => {
     Rx.Observable.concat(
         eventSourcing.eventStore.start$(),

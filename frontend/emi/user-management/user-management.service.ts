@@ -63,6 +63,8 @@ export class UserManagementService {
       });
   }
 
+  
+
 /**
  * Gets the users filtered by page, count and a search filter.
  * @param pageValue Page number of the user table that you want to recover.
