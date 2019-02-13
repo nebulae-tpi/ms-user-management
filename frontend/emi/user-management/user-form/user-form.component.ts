@@ -12,7 +12,7 @@ import { UserFormService } from './user-form.service';
 import { ToolbarService } from '../../../toolbar/toolbar.service';
 
 
-////////// RXJS ///////////
+////////// RXJS //////////
 // tslint:disable-next-line:import-blacklist
 import * as Rx from 'rxjs/Rx';
 import { of, from, Subject, Observable} from 'rxjs';
