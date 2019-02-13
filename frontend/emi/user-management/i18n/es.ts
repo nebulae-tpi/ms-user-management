@@ -66,7 +66,8 @@ export const locale = {
         'PLATFORM-ADMIN': 'Administrador plataforma',
         'SYSADMIN': 'Administrador de sistema',
         'BUSINESS-ADMIN': 'Administrador unidad de negocio',
-        'BUSINESS-VIEWER': 'Visualizador de unidad de negocio'
+        'BUSINESS-VIEWER': 'Visualizador de unidad de negocio',
+        'OPERATOR': 'Operador'
       },
       CLOSE: 'Cerrar',
       RESET_PASSWORD: 'Restablecer contraseña'
@@ -79,7 +80,7 @@ export const locale = {
       16002: 'Permiso denegado.',
       16010: 'Datos faltantes del usuario',
       16011: 'El nombre de usuario ya está siendo usado',
-      16012: 'Nombre de usuario invalido, el nombre de usuario debe contener como mínimo 8 caracteres y estar compuesto por al menos un (1) número y una (1) letra minúscula.',
+      16012: 'Nombre de usuario invalido, el nombre de usuario debe contener como mínimo 8 caracteres.',
       16014: 'El email ya está siendo usado',
       16015: 'Permiso denegado, no es posible actualizar la información de su propio usuario',
       16016: 'Permiso denegado, no tiene permisos para actualizar un usuario perteneciente a otra unidad de negocio',

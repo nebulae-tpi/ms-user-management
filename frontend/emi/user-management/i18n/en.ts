@@ -66,7 +66,8 @@ export const locale = {
         'PLATFORM-ADMIN': 'Platform admin',
         'SYSADMIN': 'System admin',
         'BUSINESS-ADMIN': 'Business admin',
-        'BUSINESS-VIEWER': 'Business viewer'
+        'BUSINESS-VIEWER': 'Business viewer',
+        'OPERATOR': 'Operator'
       },
       CLOSE: 'Close',
       RESET_PASSWORD: 'Reset password'
@@ -80,7 +81,7 @@ export const locale = {
     16002: 'Permission denied',
     16010: 'User missing data',
     16011: 'The username is already used',
-    16012: 'invalid username, the username must contain at least 8 charactersand be composed by numbers, letters, periods and hyphens.',
+    16012: 'invalid username, the username must contain at least 8 characters.',
     16014: 'The email is already used',
     16015: 'Permission denied, it is not possible to update your own users information',
     16016: 'Permission denied, you dont have the permission to update an user that belongs to another business unit',

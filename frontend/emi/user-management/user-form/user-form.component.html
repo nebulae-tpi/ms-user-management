@@ -137,7 +137,7 @@
               </div>
 
               <mat-form-field class="w-100-p">
-                <input matInput name="username" formControlName="username" maxlength="15" placeholder="{{'USER.USERNAME' | translate}}">
+                <input matInput name="username" formControlName="username" maxlength="40" placeholder="{{'USER.USERNAME' | translate}}">
                 <mat-error *ngIf="userAuthForm.hasError('required', ['username'])">
                   {{'USER.USERNAME_REQUIRED' | translate}}
                 </mat-error>

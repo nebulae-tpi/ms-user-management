@@ -17,7 +17,7 @@ const {
   USER_WAS_NOT_DELETED
 } = require("../tools/ErrorCodes");
 const context = "UserManagement";
-const userNameRegex = /^[a-zA-Z0-9._-]{8,}$/;
+const userNameRegex = /^[a-zA-Z0-9._@-]{8,}$/;
 
 class UserValidatorHelper {
   //Validates if the user can be created checking if the info

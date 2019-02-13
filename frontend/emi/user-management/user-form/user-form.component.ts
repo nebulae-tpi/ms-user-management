@@ -172,7 +172,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
         },
         Validators.compose([
           Validators.required,
-          Validators.pattern('^[a-zA-Z0-9._-]{8,}$')
+          Validators.pattern('^[a-zA-Z0-9._@-]{8,}$')
         ])
       ],
         password: [
