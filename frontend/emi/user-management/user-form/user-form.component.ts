@@ -238,8 +238,12 @@ export class UserFormComponent implements OnInit, OnDestroy {
    * Creates a new user according to the info entered into the form
    */
   createUser() {
+    const generalInfoRawValue = this.userGeneralInfoForm.getRawValue();
     const data: any = {};
-    data.generalInfo = this.userGeneralInfoForm.getRawValue();
+    data.generalInfo = { ...generalInfoRawValue,
+      name: generalInfoRawValue.name.toUpperCase(),
+      lastname: generalInfoRawValue.lastname.toUpperCase(),
+    };
     data.generalInfo.phone = data.generalInfo.phone.toString();
     data.state = this.userStateForm.getRawValue().state;
     this.userFormService

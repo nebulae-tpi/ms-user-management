@@ -37,7 +37,7 @@ jobs:
             gitChanged frontend || npm install -g @nebulae/cli
             gitChanged frontend || npm install -g @angular/cli
             gitChanged frontend || nebulae register microfrontend --microservice-id=user-management --frontend-id=emi --setup-file=/home/circleci/nebulae/repo/etc/mfe-setup.json --store-type=GCP_DATASTORE --gcp-service-account-token=/tmp/gcloud-service-key.json            
-            gitChanged frontend || nebulae compose-ui production --shell-type=FUSE2_ANGULAR --shell-repo=https://github.com/nebulae-tpi/emi.git --frontend-id=emi --output-dir=/home/circleci/nebulae/frontend/emi/ --store-type=GCP_DATASTORE --gcp-service-account-token=/tmp/gcloud-service-key.json
+            gitChanged frontend || nebulae compose-ui production --shell-finalEnvFile=$FILE_ENV_FRONTEND --shell-type=FUSE2_ANGULAR --shell-repo=https://github.com/nebulae-tpi/emi.git --frontend-id=emi --output-dir=/home/circleci/nebulae/frontend/emi/ --store-type=GCP_DATASTORE --gcp-service-account-token=/tmp/gcloud-service-key.json
             gitChanged frontend || ls /home/circleci/nebulae/frontend/emi/           
       - run:
           name: Download SHELL Repository
@@ -153,7 +153,7 @@ jobs:
             mkdir ~/nebulae/backend
             cp ~/nebulae/go/mbinit ~/nebulae/repo/backend/user-management/
             export DOCKERHUB_IMAGE=user-management.backend.user-management
-            export DOCKERHUB_TAG=0.0.7
+            export DOCKERHUB_TAG=0.0.8
             gitChanged backend/user-management || docker build -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG -t $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:latest ~/nebulae/repo/backend/user-management/
             gitChanged backend/user-management || docker login -u $DOCKERHUB_USER -p $DOCKERHUB_PASS
             gitChanged backend/user-management || docker push $DOCKERHUB_NAMESPACE/$DOCKERHUB_IMAGE:$DOCKERHUB_TAG
@@ -194,7 +194,8 @@ jobs:
         - run:
             name: Deploy BackEnds 
             command: |
-              kubectl apply -f ~/nebulae/repo/deployment/gke/              
+              test "$ENVIRONMENT" = "prod" && for xi in $(ls ~/nebulae/repo/deployment/gke/*.y*ml); do sed -i s/nebulaetpi/nebulaetpiprod/ $xi ; done
+              kubectl apply -f ~/nebulae/repo/deployment/gke/
 
 
 
