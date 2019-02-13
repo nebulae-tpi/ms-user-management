@@ -27,7 +27,7 @@ class UserValidatorHelper {
     //Validate if the user that is performing the operation has the required role.
     return this.checkRole$(authToken, method)
         .mergeMap(roles => {
-          const user = data.args ? data.args.input : undefined;
+          const user = data.args ? data.args.input:undefined;
           const businessId = data.args ? data.args.businessId.trim() : undefined;
           //Validate if required parameters were sent
           const invalidUserMissingData = !user || !user.generalInfo.name || !user.generalInfo.lastname || !user.generalInfo.email || !user.generalInfo.phone;
@@ -53,7 +53,9 @@ class UserValidatorHelper {
           //return Rx.Observable.of(user);
         })
         //Checks if the email already was used
-        .mergeMap(user => this.checkEmailExistKeycloakOrMongo$(null, user.generalInfo.email).mapTo(user));
+        .mergeMap(user => {
+          return this.checkEmailExistKeycloakOrMongo$(null, user.generalInfo.email, null).mapTo(user);
+        });
   }
 
   //Validates if the user can be updated checking if the info
@@ -85,7 +87,7 @@ class UserValidatorHelper {
         .mergeMap(user => {
           return UserDA.getUserById$(data.args.userId)
           .mergeMap(userMongo => 
-            this.checkEmailExistKeycloakOrMongo$(userMongo.auth ? userMongo.auth.userKeycloakId: undefined, user.generalInfo.email)
+            this.checkEmailExistKeycloakOrMongo$(userMongo.auth ? userMongo.auth.userKeycloakId: undefined, user.generalInfo.email, userMongo._id)
             .mapTo(user)
           )
         })
@@ -188,7 +190,6 @@ class UserValidatorHelper {
   static validateCreateUserAuth$(data, authToken) {
     const method = "createUserAuth$()";
 
-    console.log('data.args.userId => ', data.args.userId);
     //Validate if the user that is performing the operation has the required role.
     return this.checkRole$(authToken, method)
         .mergeMap(roles => {
@@ -221,7 +222,7 @@ class UserValidatorHelper {
         .mergeMap(user => this.checkUsernameExistKeycloak$(user, data.args.username))
         //Checks if the email already was used
         .mergeMap(user => {
-          return this.checkEmailExistKeycloakOrMongo$(null, user.generalInfo.email).mapTo(user);
+          return this.checkEmailExistKeycloakOrMongo$(null, user.generalInfo.email, user._id).mapTo(user);
         });
   }
 
@@ -381,7 +382,7 @@ class UserValidatorHelper {
     );
   }
 
-  static checkEmailExistKeycloakOrMongo$(userKeycloakId, email) {
+  static checkEmailExistKeycloakOrMongo$(userKeycloakId, email, userId) {
     return Rx.Observable.of(email)
     .mergeMap(email => 
       Rx.Observable.forkJoin(
@@ -389,20 +390,11 @@ class UserValidatorHelper {
         UserDA.getUserByEmailMongo$(email)
     ))
     .mergeMap(([keycloakResult, mongoResult]) => {
-      console.log("KEYCLOAK_RESULT", keycloakResult);
-      console.log("MONGO_RESULT", mongoResult);
-
       if (keycloakResult && keycloakResult.length > 0 && (!userKeycloakId || userKeycloakId != keycloakResult[0].id)) {
-        return this.createCustomError$(
-          EMAIL_ALREADY_USED_ERROR_CODE,
-          'Error'
-        );
+        return this.createCustomError$(EMAIL_ALREADY_USED_ERROR_CODE,'Error');
       }
-       if (mongoResult  && (!userKeycloakId || userKeycloakId != mongoResult._id)) {
-        return this.createCustomError$(
-          EMAIL_ALREADY_USED_ERROR_CODE,
-          'Error'
-        );
+       if (mongoResult  && (!userId || userId != mongoResult._id)) {
+        return this.createCustomError$(EMAIL_ALREADY_USED_ERROR_CODE,'Error');
       }
       return Rx.Observable.of(email);
     });
@@ -412,7 +404,6 @@ class UserValidatorHelper {
   static checkUsernameExistKeycloak$(user, username) {
     return UserDA.getUserKeycloak$(username)
     .mergeMap(userFound => {
-      console.log('username => ', username, 'userFound => ', userFound);
        if(userFound && userFound.length > 0){
           return this.createCustomError$(USER_NAME_ALREADY_USED_CODE, 'Error');
         }
