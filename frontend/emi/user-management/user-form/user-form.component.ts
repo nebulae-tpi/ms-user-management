@@ -273,6 +273,8 @@ export class UserFormComponent implements OnInit, OnDestroy {
   updateUserGeneralInfo() {
     const data: any = {};
     data.generalInfo = this.userGeneralInfoForm.getRawValue();
+    data.generalInfo.name = data.generalInfo.name.toUpperCase();
+    data.generalInfo.lastname = data.generalInfo.lastname.toUpperCase();
     data.generalInfo.phone = data.generalInfo.phone.toString();
     this.userFormService
       .updateUserGeneralInfo$(this.user._id, data)
