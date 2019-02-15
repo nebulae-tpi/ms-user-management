@@ -44,7 +44,7 @@ class UserValidatorHelper {
           if (!businessId) {
             return this.createCustomError$(MISSING_BUSINESS_ERROR_CODE, method);
           }
-
+          user.creationTimestamp = new Date().getTime();
           user.businessId = businessId;
 
           //If the user that is performing the operation is not PLATFORM-ADMIN,
@@ -82,10 +82,10 @@ class UserValidatorHelper {
           //If the user that is performing the operation is not PLATFORM-ADMIN,
           // we must check that the business id match with the id of the token
           return this.checkIfUserBelongsToTheSameBusiness$(user, authToken, method, roles);
-        })
-        .mergeMap(user => this.checkIfUserIsTheSameUserLogged$(user, authToken, method))
+        })        
         .mergeMap(user => {
           return UserDA.getUserById$(data.args.userId)
+          .mergeMap(userMongo => this.checkIfUserIsTheSameUserLogged$(userMongo, authToken, method).map(() => userMongo))
           .mergeMap(userMongo => 
             this.checkEmailExistKeycloakOrMongo$(userMongo.auth ? userMongo.auth.userKeycloakId: undefined, user.generalInfo.email, userMongo._id)
             .mapTo(user)
@@ -116,7 +116,11 @@ class UserValidatorHelper {
           //If the user that is performing the operation is not PLATFORM-ADMIN,
           // we must check that the business id match with the id of the token
           return this.checkIfUserBelongsToTheSameBusiness$(user, authToken, method, roles);
-        })
+      })
+      .mergeMap(user => {
+        return UserDA.getUserById$(data.args.userId)
+        .mergeMap(userMongo => this.checkIfUserIsTheSameUserLogged$(userMongo, authToken, method).map(() => user))
+      })  
     );
   }
 
@@ -138,53 +142,6 @@ class UserValidatorHelper {
     
   // }
 
-
-  //Validates if the user can resset its password
-  static validateUpdateUserAuth$(data, authToken) {
-    const method = "updateUserAuth$()";
-    //Validate if the user that is performing the operation has the required role.
-    return (
-      this.checkRole$(authToken, method)
-        .mergeMap(roles => {
-          return Rx.Observable.of(roles)
-          .mergeMap(() => UserDA.getUserById$(data.args.userId))
-          .map(user => [roles, user])
-        })
-        .mergeMap(([roles, user]) => {
-          const userId = data.args ? data.args.userId : undefined;
-          const username = data.args ? data.args.username : undefined;
-          const userPasswordInput = data.args ? data.args.input : undefined;
-
-          //Validate if required parameters were sent
-          const invalidUserMissingData =
-            !userId ||
-            (!username || username.trim().length == 0) || 
-            !userPasswordInput ||
-            !user.businessId || 
-            !user.name ||
-            !user.lastname;
-
-
-          //Evaluate if the username has a valid format
-          const invalidUserNameFormat =
-            !username || !user.username.trim().match(userNameRegex);
-
-          if (invalidUserMissingData || invalidUserNameFormat) {
-            return this.createCustomError$(
-              invalidUserMissingData
-                ? USER_MISSING_DATA_ERROR_CODE
-                : INVALID_USERNAME_FORMAT_ERROR_CODE, method
-            );
-          }
-
-          //If the user that is performing the operation is not PLATFORM-ADMIN,
-          // we must check that the business id match with the id of the token
-          return this.checkIfUserBelongsToTheSameBusiness$(user, authToken, method, roles);
-        })
-        .mergeMap(user => this.checkIfUserIsTheSameUserLogged$(user, authToken))
-        .mergeMap(user => this.checkUserEmailExistKeycloak$(user, user.email))
-    );
-  }
 
   // Validates if the user can resset its password
   static validateCreateUserAuth$(data, authToken) {
@@ -224,6 +181,55 @@ class UserValidatorHelper {
         .mergeMap(user => {
           return this.checkEmailExistKeycloakOrMongo$(null, user.generalInfo.email, user._id).mapTo(user);
         });
+  }
+
+  //Validates if the user can resset its password
+  static validateUpdateUserAuth$(data, authToken) {
+    const method = "updateUserAuth$()";
+    //Validate if the user that is performing the operation has the required role.
+    return (
+      this.checkRole$(authToken, method)
+        .mergeMap(roles => {
+          return Rx.Observable.of(roles)
+          .mergeMap(() => UserDA.getUserById$(data.args.userId))
+          .map(user => [roles, user])
+        })
+        .mergeMap(([roles, user]) => {
+          const userId = data.args ? data.args.userId : undefined;
+          const username = data.args ? data.args.username : undefined;
+          const userPasswordInput = data.args ? data.args.input : undefined;
+
+          //Validate if required parameters were sent
+          const invalidUserMissingData =
+            !userId ||
+            (!username || username.trim().length == 0) || 
+            !userPasswordInput ||
+            !user.businessId || 
+            !user.name ||
+            !user.lastname;
+
+
+          //Evaluate if the username has a valid format
+          const invalidUserNameFormat =
+            !username || !user.username.trim().match(userNameRegex);
+
+          if (invalidUserMissingData || invalidUserNameFormat) {
+            return this.createCustomError$(
+              invalidUserMissingData
+                ? USER_MISSING_DATA_ERROR_CODE
+                : INVALID_USERNAME_FORMAT_ERROR_CODE, method
+            );
+          }
+
+          console.log('User ------> ', user);
+
+          //If the user that is performing the operation is not PLATFORM-ADMIN,
+          // we must check that the business id match with the id of the token
+          return this.checkIfUserBelongsToTheSameBusiness$(user, authToken, method, roles);
+        })
+        .mergeMap(user => this.checkIfUserIsTheSameUserLogged$(user, authToken))
+        .mergeMap(user => this.checkUserEmailExistKeycloak$(user, user.email))
+    );
   }
 
     //Validates if the user can resset its password
@@ -296,6 +302,7 @@ class UserValidatorHelper {
             return this.createCustomError$(USER_MISSING_DATA_ERROR_CODE, method);
           }
 
+          console.log('User --------------> ', user);
           //Checks if the user that is being updated exists on the same business of the user that is performing the operation
           return this.checkIfUserBelongsToTheSameBusiness$(
             user,
@@ -305,7 +312,10 @@ class UserValidatorHelper {
           );
           //return Rx.Observable.of(user);
         })
-        .mergeMap(user => this.checkIfUserIsTheSameUserLogged$(user, authToken))        
+        .mergeMap(user => {
+          return UserDA.getUserById$(data.args.userId)
+          .mergeMap(userMongo => this.checkIfUserIsTheSameUserLogged$(userMongo, authToken, method).map(() => user))
+        })     
 
     );
   }
@@ -329,7 +339,11 @@ class UserValidatorHelper {
           }
           return this.checkIfUserBelongsToTheSameBusiness$(user, authToken, method, roles);
         })
-        .mergeMap(user => this.checkIfUserIsTheSameUserLogged$(user, authToken))
+        // .mergeMap(user => this.checkIfUserIsTheSameUserLogged$(user, authToken))
+        .mergeMap(user => {
+          return UserDA.getUserById$(data.args.userId)
+          .mergeMap(userMongo => this.checkIfUserIsTheSameUserLogged$(userMongo, authToken, method).map(() => user))
+        })
     );
   }
 

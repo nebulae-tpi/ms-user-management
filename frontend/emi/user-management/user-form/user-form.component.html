@@ -112,6 +112,9 @@
                 <mat-error *ngIf="userGeneralInfoForm.hasError('required', ['phone'])">
                   {{'USER.PHONE_REQUIRED' | translate}}
                 </mat-error>
+                <mat-error *ngIf="userGeneralInfoForm.hasError('max', ['phone'])">
+                  {{'USER.PHONE_MAX_LENGTH' | translate}}
+                </mat-error>
               </mat-form-field>
 
               <div class="mt-16">

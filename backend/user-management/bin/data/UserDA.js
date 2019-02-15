@@ -447,7 +447,7 @@ class UserDA {
     return Rx.Observable.defer(()=>
       collection
         .find(filterObject)
-        .sort({timestamp: -1})
+        .sort({creationTimestamp: -1})
         .skip(count * page)
         .limit(count)
         .toArray()

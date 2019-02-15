@@ -146,7 +146,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
         this.user.generalInfo ? this.user.generalInfo.email : '',
         Validators.email
       ],
-      phone: [this.user.generalInfo ? this.user.generalInfo.phone : '', Validators.required]
+      phone: [this.user.generalInfo ? this.user.generalInfo.phone : '', [Validators.required, Validators.max(999999999999999)]]
     });
   }
 
