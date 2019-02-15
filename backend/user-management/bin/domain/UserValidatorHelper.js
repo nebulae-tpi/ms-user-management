@@ -397,22 +397,36 @@ class UserValidatorHelper {
   }
 
   static checkEmailExistKeycloakOrMongo$(userKeycloakId, email, userId) {
-    return Rx.Observable.of(email)
-    .mergeMap(email => 
+    const emailLowercase = email.toLowerCase();
+    return Rx.Observable.of(emailLowercase)
+    .mergeMap(emailLowercase => 
       Rx.Observable.forkJoin(
-        UserDA.getUserKeycloak$(null, email),
-        UserDA.getUserByEmailMongo$(email)
+        UserDA.getUserKeycloak$(null, emailLowercase),
+        UserDA.getUserByEmailMongo$(emailLowercase)
     ))
     .mergeMap(([keycloakResult, mongoResult]) => {
-      if (keycloakResult && keycloakResult.length > 0 && (!userKeycloakId || userKeycloakId != keycloakResult[0].id)) {
+      const userKeycloak = this.searchUserKeycloakByEmail(keycloakResult, emailLowercase);
+      //console.log('keycloakResult => ', userKeycloak);
+      if (userKeycloak && (!userKeycloakId || userKeycloakId != userKeycloak.id)) {
         return this.createCustomError$(EMAIL_ALREADY_USED_ERROR_CODE,'Error');
       }
        if (mongoResult  && (!userId || userId != mongoResult._id)) {
         return this.createCustomError$(EMAIL_ALREADY_USED_ERROR_CODE,'Error');
       }
-      return Rx.Observable.of(email);
+      return Rx.Observable.of(emailLowercase);
     });
+  }
 
+  /**
+   * 
+   * @param {*} keycloakResult 
+   * @param {*} email 
+   */
+  static searchUserKeycloakByEmail(keycloakResult, email){
+    if (keycloakResult && keycloakResult.length > 0) {
+      return keycloakResult.find(userKeycloak => userKeycloak.email == email);
+    }
+    return null;
   }
 
   static checkUsernameExistKeycloak$(user, username) {

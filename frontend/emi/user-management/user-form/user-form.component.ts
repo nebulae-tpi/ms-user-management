@@ -244,6 +244,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
       name: generalInfoRawValue.name.toUpperCase(),
       lastname: generalInfoRawValue.lastname.toUpperCase(),
     };
+    data.generalInfo.email = data.generalInfo.email.toLowerCase();
     data.generalInfo.phone = data.generalInfo.phone.toString();
     data.state = this.userStateForm.getRawValue().state;
     this.userFormService
@@ -273,6 +274,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
   updateUserGeneralInfo() {
     const data: any = {};
     data.generalInfo = this.userGeneralInfoForm.getRawValue();
+    data.generalInfo.email = data.generalInfo.email.toLowerCase();
     data.generalInfo.name = data.generalInfo.name.toUpperCase();
     data.generalInfo.lastname = data.generalInfo.lastname.toUpperCase();
     data.generalInfo.phone = data.generalInfo.phone.toString();
