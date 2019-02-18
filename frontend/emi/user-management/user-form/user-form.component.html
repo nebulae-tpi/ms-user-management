@@ -176,9 +176,11 @@
               </mat-slide-toggle>
 
               <div class="mt-16">
-                <button mat-raised-button *ngIf="user._id && (!user.auth || !user.auth.username)" (click)="createUserAuth(formDirective)"
+                <button type="button" mat-raised-button *ngIf="user._id && (!user.auth || !user.auth.username)"
+                  (click)="createUserAuth(formDirective)"
                   [disabled]="userAuthForm.invalid || userAuthForm.pristine">{{'USER.SAVE' | translate}}</button>
-                <button mat-raised-button *ngIf="user._id && user.auth && user.auth.username" (click)="resetUserPassword(formDirective)"
+                <button type="button" mat-raised-button *ngIf="user._id && user.auth && user.auth.username"
+                  (click)="resetUserPassword(formDirective)"
                   [disabled]="userAuthForm.invalid || userAuthForm.pristine">{{'USER.RESET_PASSWORD' | translate}}</button>
               </div>
 
