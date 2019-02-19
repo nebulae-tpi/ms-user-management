@@ -68,7 +68,8 @@ export const locale = {
         'SYSADMIN': 'Administrador de sistema',
         'BUSINESS-ADMIN': 'Administrador unidad de negocio',
         'BUSINESS-VIEWER': 'Visualizador de unidad de negocio',
-        'OPERATOR': 'Operador'
+        'OPERATOR': 'Operador',
+        'COORDINATOR': 'Coordinador',
       },
       CLOSE: 'Cerrar',
       RESET_PASSWORD: 'Restablecer contraseña'
