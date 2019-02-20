@@ -15,10 +15,6 @@ const INTERNAL_SERVER_ERROR_CODE = 16001;
 const USERS_PERMISSION_DENIED_ERROR_CODE = 16002;
 
 
-
-
-
-
 /**
  * get response and return an error if the http code is different to 200
  * @param {*} response
