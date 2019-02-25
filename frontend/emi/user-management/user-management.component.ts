@@ -165,7 +165,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
    * Paginator of the table
    */
   getPaginator$() {
-    return this.paginator.page.pipe(startWith({ pageIndex: 0, pageSize: 10 }));
+    return this.paginator.page.pipe(startWith({ pageIndex: 0, pageSize: 25 }));
   }
 
   getUsers$(page, count, searchFilter, businessId) {
