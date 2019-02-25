@@ -74,7 +74,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   tableSize: number;
   page = 0;
-  count = 10;
+  count = 25;
   searchFilter = '';
   sortColumn = null;
   sortOrder = null;
