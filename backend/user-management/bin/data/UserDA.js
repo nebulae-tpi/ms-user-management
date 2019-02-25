@@ -35,7 +35,7 @@ class UserDA {
   }
 
    /**
-    * Adds the specified roles to the user
+    * Adds the specified roles to the user.
     * @param {*} userId Id of the user 
     * @param {*} arrayRoles Roles to be added to the user
     */

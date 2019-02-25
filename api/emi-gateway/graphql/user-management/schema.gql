@@ -102,7 +102,7 @@ type CommandResponse {
 }
 
 type Query {
-  "Gets the users "
+  "Gets the users."
   getUsers(page: Int!, count: Int!, searchFilter: String, businessId: String): [User]
   "Gets a user by its username"
   getUser(id: String!, businessId: String): User
