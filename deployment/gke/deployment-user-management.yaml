@@ -78,7 +78,7 @@ spec:
               name: keycloak
               key: keycloak_backend_password
         - name: USER_ROLES_ALLOW_TO_ASSIGN
-          value: '{"BUSINESS-OWNER": ["BUSINESS-OWNER", "OPERATOR", "COORDINATOR"], "PLATFORM-ADMIN": ["PLATFORM-ADMIN", "BUSINESS-OWNER", "OPERATOR", "COORDINATOR"]}'
+          value: '{"BUSINESS-OWNER": ["BUSINESS-OWNER", "OPERATOR", "COORDINATOR", "DISCIPLINARY_COMMITTEE"], "PLATFORM-ADMIN": ["PLATFORM-ADMIN", "BUSINESS-OWNER", "OPERATOR", "COORDINATOR", "DISCIPLINARY_COMMITTEE"]}'
         - name: ROLE_FIRST_USER_ASSIGN
           value: '{"roles": ["BUSINESS-OWNER"]}'
         - name: KEYCLOAK_BACKEND_CLIENT_ID
