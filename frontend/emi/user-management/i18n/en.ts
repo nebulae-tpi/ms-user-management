@@ -70,7 +70,7 @@ export const locale = {
         'BUSINESS-VIEWER': 'Business viewer',
         'OPERATOR': 'Operator',
         'COORDINATOR': 'Coordinator',
-        'DISCIPLINARY_COMMITTEE': 'Disciplinary Committee'
+        'DISCIPLINARY-COMMITTEE': 'Disciplinary Committee'
       },
       CLOSE: 'Close',
       RESET_PASSWORD: 'Reset password'

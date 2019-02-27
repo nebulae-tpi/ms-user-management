@@ -70,7 +70,7 @@ export const locale = {
         'BUSINESS-VIEWER': 'Visualizador de unidad de negocio',
         'OPERATOR': 'Operador',
         'COORDINATOR': 'Coordinador',
-        'DISCIPLINARY_COMMITTEE': 'Comité Disciplinario'
+        'DISCIPLINARY-COMMITTEE': 'Comité Disciplinario'
       },
       CLOSE: 'Cerrar',
       RESET_PASSWORD: 'Restablecer contraseña'
