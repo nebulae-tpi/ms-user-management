@@ -56,7 +56,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // this.user = new User(this.router.snapshot.data.data ? this.router.snapshot.data.data.data.getUser : undefined);
+    //this.user = new User(this.router.snapshot.data.data ? this.router.snapshot.data.data.data.getUser : undefined);
     this.pageType = this.user._id ? 'edit' : 'new';
     this.userGeneralInfoForm = this.createUserGeneralInfoForm();
     this.userAuthForm = this.createUserAuthForm();

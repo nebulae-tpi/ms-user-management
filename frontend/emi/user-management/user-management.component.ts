@@ -74,7 +74,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   @ViewChild(MatSort) sort: MatSort;
   tableSize: number;
   page = 0;
-  count = 10;
+  count = 25;
   searchFilter = '';
   sortColumn = null;
   sortOrder = null;
@@ -165,7 +165,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
    * Paginator of the table
    */
   getPaginator$() {
-    return this.paginator.page.pipe(startWith({ pageIndex: 0, pageSize: 10 }));
+    return this.paginator.page.pipe(startWith({ pageIndex: 0, pageSize: 25 }));
   }
 
   getUsers$(page, count, searchFilter, businessId) {

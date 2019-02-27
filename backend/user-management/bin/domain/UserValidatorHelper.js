@@ -1,4 +1,5 @@
 const UserDA = require("../data/UserDA");
+const KeycloakDA = require("../data/KeycloakDA").singleton();
 const Rx = require("rxjs");
 const RoleValidator = require("../tools/RoleValidator");
 const { CustomError, DefaultError } = require("../tools/customError");
@@ -14,18 +15,37 @@ const {
   USER_CREDENTIAL_EXIST_ERROR_CODE,
   USER_NOT_FOUND_ERROR_CODE,
   USER_DOES_NOT_HAVE_AUTH_CREDENTIALS_ERROR_CODE,
-  USER_WAS_NOT_DELETED
+  USER_WAS_NOT_DELETED,
+  INVALID_TOKEN_ERROR_CODE
 } = require("../tools/ErrorCodes");
 const context = "UserManagement";
 const userNameRegex = /^[a-zA-Z0-9._@-]{8,}$/;
 
 class UserValidatorHelper {
+
+
+    /**
+   * Check token validity
+   */
+  static checkTokenValidity$(){
+    return KeycloakDA.checkTokenValidity$()
+    .catch(error => {
+        console.log('An error ocurred checking keycloak token validity: ', error);
+        //return this.throwCustomError$(INVALID_TOKEN_ERROR_CODE);
+        return this.createCustomError$(
+          INVALID_TOKEN_ERROR_CODE,
+          'checkTokenValidity'
+        );
+    });
+  }
+
   //Validates if the user can be created checking if the info
   // is valid and the username and email have not been used
   static validateUserCreation$(data, authToken) {
     const method = "createUser$()";
     //Validate if the user that is performing the operation has the required role.
     return this.checkRole$(authToken, method)
+        .mergeMap(roles => this.checkTokenValidity$().map(res => roles))
         .mergeMap(roles => {
           const user = data.args ? data.args.input:undefined;
           const businessId = data.args ? data.args.businessId.trim() : undefined;
@@ -65,6 +85,7 @@ class UserValidatorHelper {
     //Validate if the user that is performing the operation has the required role.
     return (
       this.checkRole$(authToken, method)
+        .mergeMap(roles => this.checkTokenValidity$().map(res => roles))
         .mergeMap(roles => {
           const user = {
             generalInfo: data.args ? data.args.input.generalInfo : undefined,
@@ -100,6 +121,7 @@ class UserValidatorHelper {
     //Validate if the user that is performing the operation has the required role.
     return (
       this.checkRole$(authToken, method)
+      .mergeMap(roles => this.checkTokenValidity$().map(res => roles))
       .mergeMap(roles => {
           const user = {
             _id: data.args ? data.args.userId : undefined,
@@ -149,6 +171,7 @@ class UserValidatorHelper {
 
     //Validate if the user that is performing the operation has the required role.
     return this.checkRole$(authToken, method)
+        .mergeMap(roles => this.checkTokenValidity$().map(res => roles))
         .mergeMap(roles => {
           return Rx.Observable.of(roles)
           .mergeMap(() => UserDA.getUserById$(data.args.userId))
@@ -189,6 +212,7 @@ class UserValidatorHelper {
     //Validate if the user that is performing the operation has the required role.
     return (
       this.checkRole$(authToken, method)
+        .mergeMap(roles => this.checkTokenValidity$().map(res => roles))
         .mergeMap(roles => {
           return Rx.Observable.of(roles)
           .mergeMap(() => UserDA.getUserById$(data.args.userId))
@@ -237,6 +261,7 @@ class UserValidatorHelper {
       const method = "removeUserAuth$()";
       //Validate if the user that is performing the operation has the required role.
       return (this.checkRole$(authToken, method)
+          .mergeMap(roles => this.checkTokenValidity$().map(res => roles))
           .mergeMap(roles => {
             return Rx.Observable.of(roles)
             .mergeMap(() => UserDA.getUserById$(data.args.userId))
@@ -280,6 +305,7 @@ class UserValidatorHelper {
     const method = "resetUserPassword$()";
     //Validate if the user that is performing the operation has the required role.
     return (this.checkRole$(authToken, method)
+        .mergeMap(roles => this.checkTokenValidity$().map(res => roles))
         .mergeMap(roles => {
           const businessId = data.args ? (data.args.businessId ? data.args.businessId.trim(): undefined) : undefined
           return Rx.Observable.of(roles)
@@ -326,6 +352,7 @@ class UserValidatorHelper {
     //Validate if the user that is performing the operation has the required role.
     return (
       this.checkRole$(authToken, method)
+        .mergeMap(roles => this.checkTokenValidity$().map(res => roles))
         .mergeMap(roles => {
           const user = {
             _id: data.args ? data.args.userId : undefined,
@@ -430,14 +457,30 @@ class UserValidatorHelper {
   }
 
   static checkUsernameExistKeycloak$(user, username) {
+    //const usernameLowercase = username.toLowerCase();
     return UserDA.getUserKeycloak$(username)
-    .mergeMap(userFound => {
-       if(userFound && userFound.length > 0){
-          return this.createCustomError$(USER_NAME_ALREADY_USED_CODE, 'Error');
-        }
-        return Rx.Observable.of(user);
+    .mergeMap(keycloakResult => {
+      const userKeycloak = this.searchUserKeycloakByUsername(keycloakResult, username);
+      //console.log('keycloakResult => ', userKeycloak);
+      if (userKeycloak) {
+        return this.createCustomError$(USER_NAME_ALREADY_USED_CODE,'Error');
+      }
+
+      return Rx.Observable.of(user);
       }
     );
+  }
+
+  /**
+   * Searches user keycloak by username
+   * @param {*} keycloakResult 
+   * @param {*} username 
+   */
+  static searchUserKeycloakByUsername(keycloakResult, username) {
+    if (keycloakResult && keycloakResult.length > 0) {
+      return keycloakResult.find(userKeycloak => userKeycloak.username.toLowerCase() == username.toLowerCase());
+    }
+    return null;
   }
 
   static checkUserEmailExistKeycloak$(user, email) {
