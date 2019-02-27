@@ -15,7 +15,6 @@ const salesGatewayGraphQlService = require('./services/sales-gateway/GraphQlServ
 const Rx = require('rxjs');
 
 
-
 const start = () => {
     Rx.Observable.concat(
         eventSourcing.eventStore.start$(),
