@@ -129,6 +129,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
       }
     });
   }
+  
 
   loadFilterCache(){
     return this.userManagementService.selectedBusinessEvent$
