@@ -63,7 +63,7 @@ export class UserManagementService {
       });
   }
 
-  
+
 
 /**
  * Gets the users filtered by page, count and a search filter.
