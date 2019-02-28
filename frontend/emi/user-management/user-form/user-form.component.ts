@@ -533,7 +533,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
       );
   }
 
-    /**
+  /**
    * Reset the user password
    */
   removeUserAuth(formDirective: FormGroupDirective) {

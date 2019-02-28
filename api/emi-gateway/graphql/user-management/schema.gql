@@ -104,7 +104,7 @@ type CommandResponse {
 type Query {
   "Gets the users."
   getUsers(page: Int!, count: Int!, searchFilter: String, businessId: String): [User]
-  "Gets a user by its username"
+  "Gets a user by its username."
   getUser(id: String!, businessId: String): User
   "Gets roles that the petitioner can assign to another users according to its role"
   getRoles: [String]

@@ -130,7 +130,6 @@ class UserEventConsumer {
     });
   }
 
-
 /**
  * Adds the specified roles to the user
  * @param {*} userRolesAddedEvent 
