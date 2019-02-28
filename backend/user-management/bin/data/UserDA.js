@@ -598,7 +598,7 @@ class UserDA {
 
   /**
    * Gets the roles that the user can assign to another users.
-   * @param {*} userRolesRequester Array of roles of the user that perform the request
+   * @param {*} userRolesRequester Array of roles of the user that perform the request.
    */
   static getRoles$(userRolesRequester) {
     const USER_ROLES_ALLOW_TO_ASSIGN = JSON.parse(process.env.USER_ROLES_ALLOW_TO_ASSIGN);

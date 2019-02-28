@@ -549,7 +549,6 @@ export class UserFormComponent implements OnInit, OnDestroy {
           this.snackBar.open('Las credenciales de autenticación han sido eliminadas', 'Cerrar', {
             duration: 2000
           });
-          //console.log('AUTHS TO REMOVE ==> ', this.user.auth);
           this.user.auth = null;
           formDirective.resetForm();
           this.userAuthForm = this.createUserAuthForm();
