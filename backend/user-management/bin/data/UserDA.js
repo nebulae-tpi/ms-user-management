@@ -161,7 +161,7 @@ class UserDA {
   static createUserKeycloak$(user, authInput) { 
     const attributes = {};
     attributes["businessId"] = user.businessId;
-    
+    attributes["userId"] = user._id;    
 
     const userKeycloak = {
       username: authInput.username,
