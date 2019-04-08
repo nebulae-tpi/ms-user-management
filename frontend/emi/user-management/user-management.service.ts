@@ -17,6 +17,7 @@ export class UserManagementService {
   constructor(private gateway: GatewayService) {
 
   }
+  
 
   /**
    * Returns an observable
