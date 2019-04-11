@@ -11,8 +11,7 @@
       <!-- APP TITLE -->
       <div class="logo my-12 m-sm-0" fxLayout="row" fxLayoutAlign="start center" fxHide.lt-md fxFlex="10">
         <mat-icon class="logo-icon mr-16" *fuseIfOnDom [@animate]="{ value: '*', params: { delay: '50ms', scale: '0.2' } }">user</mat-icon>
-        <span class="logo-text h1" *fuseIfOnDom [@animate]="{ value: '*', params: { delay: '100ms', x: '-25px' } }">{{
-          "USER.USER" | translate }}</span>
+        <span class="logo-text h1" *fuseIfOnDom [@animate]="{ value: '*', params: { delay: '100ms', x: '-25px' } }">{{"USER.USER" | translate }}</span>
       </div>
 
       <!-- / APP TITLE -->
@@ -43,84 +42,84 @@
 
     <!-- CONTENT CARD -->
     <div class="content-card mat-white-bg">
-      <div fxLayout="column" style="width: 100%; justify-content: space-between" fxLayout.gt-sm="row">
-        <div fxLayout="column" fxFlex="100" fxFlex.gt-sm="100" fxFlex.gt-md="100">
-          <mat-table id="user-table" class="item-table" #table [dataSource]="dataSource" [@animateStagger]="{ value: '50' }"
-            fusePerfectScrollbar>
+      <!-- <div fxLayout="column" style="width: 100%; justify-content: space-between" fxLayout.gt-sm="row"> -->
+        <!-- <div fxLayout="column" fxFlex="100" fxFlex.gt-sm="100" fxFlex.gt-md="100"> -->
+      <mat-table id="user-table" class="user-table" #table [dataSource]="dataSource" [@animateStagger]="{ value: '50' }"
+        fusePerfectScrollbar>
 
-            <!-- Fullname Column -->
-            <ng-container cdkColumnDef="fullname">
-              <mat-header-cell *cdkHeaderCellDef fxFlex="50" fxFlex.gt-xs="25">{{ "USER.FULLNAME" | translate }}</mat-header-cell>
-              <mat-cell *cdkCellDef="let user" fxFlex="50" fxFlex.gt-xs="25">
-                <p class="text-truncate">
-                  {{ user.generalInfo.name }} {{ user.generalInfo.lastname }}
-                </p>
-              </mat-cell>
-            </ng-container>
+        <!-- Fullname Column -->
+        <ng-container cdkColumnDef="fullname">
+          <mat-header-cell *cdkHeaderCellDef fxFlex="50" fxFlex.gt-xs="25">{{ "USER.FULLNAME" | translate }}</mat-header-cell>
+          <mat-cell *cdkCellDef="let user" fxFlex="50" fxFlex.gt-xs="25">
+            <p class="text-truncate">
+              {{ user.generalInfo.name }} {{ user.generalInfo.lastname }}
+            </p>
+          </mat-cell>
+        </ng-container>
 
-            <!-- Type Column -->
-            <ng-container cdkColumnDef="doc_type">
-              <mat-header-cell *cdkHeaderCellDef  fxHide fxShow.gt-xs fxFlex="30" fxFlex.gt-xs="20">{{ "USER.DOC_TYPE" | translate }}</mat-header-cell>
-              <mat-cell *cdkCellDef="let user"  fxHide fxShow.gt-xs fxFlex="30" fxFlex.gt-xs="20">
-                <p class="text-truncate" *ngIf="user.generalInfo.documentType == 'CITIZENSHIP_CARD'">
-                  {{ "USER.CITIZENSHIP_CARD" | translate }}
-                </p>
-                <p class="text-truncate" *ngIf="user.generalInfo.documentType == 'FOREIGNER_ID'">
-                  {{ "USER.FOREIGNER_ID" | translate }}
-                </p>
-                <p class="text-truncate" *ngIf="user.generalInfo.documentType == 'PASSPORT'">
-                  {{ "USER.PASSPORT" | translate }}
-                </p>
-              </mat-cell>
-            </ng-container>
+        <!-- Type Column -->
+        <ng-container cdkColumnDef="doc_type">
+          <mat-header-cell *cdkHeaderCellDef  fxHide fxShow.gt-xs fxFlex="30" fxFlex.gt-xs="20">{{ "USER.DOC_TYPE" | translate }}</mat-header-cell>
+          <mat-cell *cdkCellDef="let user"  fxHide fxShow.gt-xs fxFlex="30" fxFlex.gt-xs="20">
+            <p class="text-truncate" *ngIf="user.generalInfo.documentType == 'CITIZENSHIP_CARD'">
+              {{ "USER.CITIZENSHIP_CARD" | translate }}
+            </p>
+            <p class="text-truncate" *ngIf="user.generalInfo.documentType == 'FOREIGNER_ID'">
+              {{ "USER.FOREIGNER_ID" | translate }}
+            </p>
+            <p class="text-truncate" *ngIf="user.generalInfo.documentType == 'PASSPORT'">
+              {{ "USER.PASSPORT" | translate }}
+            </p>
+          </mat-cell>
+        </ng-container>
 
-            <!-- Doc ID Column -->
-            <ng-container cdkColumnDef="doc_id">
-              <mat-header-cell *cdkHeaderCellDef fxFlex="30" fxFlex.gt-xs="25">{{ "USER.DOC_ID" | translate }}
-              </mat-header-cell>
-              <mat-cell *cdkCellDef="let user" fxFlex="30" fxFlex.gt-xs="25">
-                <p class="text-truncate">{{ user.generalInfo.documentId }}</p>
-              </mat-cell>
-            </ng-container>
+        <!-- Doc ID Column -->
+        <ng-container cdkColumnDef="doc_id">
+          <mat-header-cell *cdkHeaderCellDef fxFlex="30" fxFlex.gt-xs="25">{{ "USER.DOC_ID" | translate }}
+          </mat-header-cell>
+          <mat-cell *cdkCellDef="let user" fxFlex="30" fxFlex.gt-xs="25">
+            <p class="text-truncate">{{ user.generalInfo.documentId }}</p>
+          </mat-cell>
+        </ng-container>
 
-            <!-- Active Column -->
-            <ng-container cdkColumnDef="state">
-              <mat-header-cell *cdkHeaderCellDef  fxFlex="20" fxFlex.gt-xs="10">{{ "USER.ACTIVE" | translate }}</mat-header-cell>
-              <mat-cell *cdkCellDef="let user" fxFlex="20" fxFlex.gt-xs="10">
-                <mat-icon *ngIf="user.state" class="active-icon mat-green-600-bg s-16">check</mat-icon>
-                <mat-icon *ngIf="!user.state" class="active-icon mat-red-500-bg s-16">close</mat-icon>
-              </mat-cell>
-            </ng-container>
+        <!-- Active Column -->
+        <ng-container cdkColumnDef="state">
+          <mat-header-cell *cdkHeaderCellDef  fxFlex="20" fxFlex.gt-xs="10">{{ "USER.ACTIVE" | translate }}</mat-header-cell>
+          <mat-cell *cdkCellDef="let user" fxFlex="20" fxFlex.gt-xs="10">
+            <mat-icon *ngIf="user.state" class="active-icon mat-green-600-bg s-16">check</mat-icon>
+            <mat-icon *ngIf="!user.state" class="active-icon mat-red-500-bg s-16">close</mat-icon>
+          </mat-cell>
+        </ng-container>
 
-            <!-- Username Column -->
-            <ng-container cdkColumnDef="username">
-              <mat-header-cell *cdkHeaderCellDef fxHide fxShow.gt-xs fxFlex="20" fxFlex.gt-xs="20">{{ "USER.USERNAME" | translate }}</mat-header-cell>
-              <mat-cell *cdkCellDef="let user" fxHide fxShow.gt-xs fxFlex="20" fxFlex.gt-xs="20">
-                <p class="text-truncate">{{ user.auth ? user.auth.username : ''}}</p>
-              </mat-cell>
-            </ng-container>
+        <!-- Username Column -->
+        <ng-container cdkColumnDef="username">
+          <mat-header-cell *cdkHeaderCellDef fxHide fxShow.gt-xs fxFlex="20" fxFlex.gt-xs="20">{{ "USER.USERNAME" | translate }}</mat-header-cell>
+          <mat-cell *cdkCellDef="let user" fxHide fxShow.gt-xs fxFlex="20" fxFlex.gt-xs="20">
+            <p class="text-truncate">{{ user.auth ? user.auth.username : ''}}</p>
+          </mat-cell>
+        </ng-container>
 
-            <!--
-              Roles Column
-              <ng-container cdkColumnDef="roles">
-                <mat-header-cell *cdkHeaderCellDef fxHide fxShow.gt-xs>{{'USER.ACTIVE' | translate}}</mat-header-cell>
-                <mat-cell *cdkCellDef="let user" fxHide fxShow.gt-xs>
-                  <span class="quantity-indicator text-truncate" [ngClass]="{'mat-primary-200-bg': !user.state, 'mat-green-600-bg': user.state}">
-                  </span>
-                </mat-cell>
-              </ng-container>
-            -->
-            
-            <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+        <!--
+          Roles Column
+          <ng-container cdkColumnDef="roles">
+            <mat-header-cell *cdkHeaderCellDef fxHide fxShow.gt-xs>{{'USER.ACTIVE' | translate}}</mat-header-cell>
+            <mat-cell *cdkCellDef="let user" fxHide fxShow.gt-xs>
+              <span class="quantity-indicator text-truncate" [ngClass]="{'mat-primary-200-bg': !user.state, 'mat-green-600-bg': user.state}">
+              </span>
+            </mat-cell>
+          </ng-container>
+        -->
+        
+        <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
 
-            <mat-row *cdkRowDef="let user; columns: displayedColumns" class="item" matRipple [routerLink]="'user/' + user._id">
-            </mat-row>
-          </mat-table>
+        <mat-row *cdkRowDef="let user; columns: displayedColumns" class="item" matRipple [routerLink]="'user/' + user._id">
+        </mat-row>
+      </mat-table>
 
-          <mat-paginator #paginator [length]="1000" [pageIndex]="0" [pageSize]="25" [pageSizeOptions]="[5, 10, 25, 100]">
-          </mat-paginator>
-        </div>
-      </div>
+      <mat-paginator #paginator [length]="1000" [pageIndex]="0" [pageSize]="25" [pageSizeOptions]="[5, 10, 25, 100]">
+      </mat-paginator>
+        <!-- </div> -->
+      <!-- </div> -->
     </div>
     <!-- / CONTENT CARD -->
   </div>
