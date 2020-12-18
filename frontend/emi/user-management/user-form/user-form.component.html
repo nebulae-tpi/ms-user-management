@@ -37,7 +37,7 @@
     <!-- / HEADER -->
 
     <!-- CONTENT CARD -->
-    <div class="content-card mat-white-bg">
+    <div class="content-scroll content-card mat-white-bg">
       <mat-tab-group>
 
         <mat-tab label="{{'USER.GENERAL_INFO' | translate}}">
@@ -132,11 +132,11 @@
         <mat-tab label="{{'USER.AUTH' | translate}}" *ngIf="user._id">
           <div class="tab-content p-24" fusePerfectScrollbar>
 
-            <form name="userAuthForm" [formGroup]="userAuthForm" #formDirective="ngForm" class="user w-100-p" fxLayout="column" class="mat-white-bg p-24 mr-24 mb-24">
-              <div fxLayout="row">
+            <form name="userAuthForm" [formGroup]="userAuthForm" #formDirective="ngForm" fxLayout="column" class="user w-100-p mat-white-bg p-24 mr-24 mb-24">
+              <div fxLayout="row wrap">
                 <div fxFlex="80" *ngIf="user.auth && user.auth.userKeycloakId" fxLayoutAlign="start start" class="h2">{{'USER.RESET_AUTH' | translate}}</div>
                 <div fxFlex="80" *ngIf="!user.auth || !user.auth.userKeycloakId" fxLayoutAlign="start start" class="h2">{{'USER.CREATE_AUTH' | translate}}</div>
-                <button mat-raised-button *ngIf="user.auth && user.auth.username" color="'accent'" type="button" (click)="removeUserAuth(formDirective)">{{'USER.REMOVE_USER_AUTH' | translate}}</button>
+                <button mat-raised-button class="text-wrap p-24 mb-24" *ngIf="user.auth && user.auth.username" color="'accent'" type="button" (click)="removeUserAuth(formDirective)">{{'USER.REMOVE_USER_AUTH' | translate}}</button>
               </div>
 
               <mat-form-field class="w-100-p">
@@ -193,7 +193,7 @@
         <mat-tab label="{{'USER.ROLES' | translate}}" *ngIf="user._id">
           <div class="tab-content p-24" fusePerfectScrollbar>
 
-              <div fxLayout="column" class="mat-white-bg p-24 mr-24 mb-24">
+              <div fxLayout="column" class="mat-white-bg p-24 mr-24 mb-24 content-roles">
                   <div fxLayoutAlign="start start" class="h2">{{'USER.USER_ROLES_ASSIGNED' | translate}}</div>
                   <div fxLayout="row">
 
