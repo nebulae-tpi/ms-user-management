@@ -112,7 +112,7 @@ class User {
         return this.handleError$(err);
       });
   }
-
+ 
   /**
    * Gets the role mapping of the indicated user
    *
