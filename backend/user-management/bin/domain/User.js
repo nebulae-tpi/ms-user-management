@@ -225,7 +225,7 @@ class User {
       .mergeMap(rawResponse => this.buildSuccessResponse$(rawResponse))
       .catch(err => this.handleError$(err));
   }
-
+ 
   /**
    * Creates a new user
    *

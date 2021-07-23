@@ -64,6 +64,7 @@ export const locale = {
       ROLES_LIST: {
         'BUSINESS-OWNER': 'Business owner',
         'POS': 'POS',
+        'POI': 'POI',
         'PLATFORM-ADMIN': 'Platform admin',
         'SYSADMIN': 'System admin',
         'BUSINESS-ADMIN': 'Business admin',
