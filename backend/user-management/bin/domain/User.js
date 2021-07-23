@@ -111,7 +111,7 @@ class User {
       .catch(err => {
         return this.handleError$(err);
       });
-  }
+  } 
  
   /**
    * Gets the role mapping of the indicated user
