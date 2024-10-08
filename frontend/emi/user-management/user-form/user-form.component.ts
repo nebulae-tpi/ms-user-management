@@ -74,7 +74,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
       map(userRoles => userRoles.some(role => role === 'PLATFORM-ADMIN' || role ==='ROLE_ADMIN')),
       tap(canUpdateRoles => { this.canUpdateRoles = canUpdateRoles; }),
     );
-  } 
+  }
 
 
   getBusinessFiltered$(filterText: String, limit: number): Observable<any[]> {
