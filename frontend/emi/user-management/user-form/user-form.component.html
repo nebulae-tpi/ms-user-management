@@ -190,7 +190,7 @@
           </div>
         </mat-tab>
 
-        <mat-tab label="{{'USER.ROLES' | translate}}" *ngIf="user._id">
+        <mat-tab label="{{'USER.ROLES' | translate}}" *ngIf="user._id && canUpdateRoles">
           <div class="tab-content p-24" fusePerfectScrollbar>
 
               <div fxLayout="column" class="mat-white-bg p-24 mr-24 mb-24 content-roles">

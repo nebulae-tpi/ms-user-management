@@ -85,6 +85,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
   businessQueryFiltered$: Observable<any>;
   // selectedBusinessSubject$ = new Subject<any>();
   isAdmin: Boolean = false;
+  canUpdateRoles: Boolean = false;
   selectedUser: any;
   selectedBusinessData: any = null;
   selectedBusinessId: any = null;
@@ -107,6 +108,7 @@ export class UserManagementComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.checkIfUserIsAdmin$().subscribe();
+    this.checkIfUserCanUpdateRoles$().subscribe();
     this.buildFilterForm();
     this.loadBusinessFilter();
     this.loadFilterCache();
@@ -243,6 +245,13 @@ export class UserManagementComponent implements OnInit, OnDestroy {
     return of(this.keycloakService.getUserRoles(true)).pipe(
       map(userRoles => userRoles.some(role => role === 'PLATFORM-ADMIN')),
       tap(isAdmin => { this.isAdmin = isAdmin; }),
+    );
+  }
+
+  checkIfUserCanUpdateRoles$() {
+    return of(this.keycloakService.getUserRoles(true)).pipe(
+      map(userRoles => userRoles.some(role => role === 'PLATFORM-ADMIN' || role ==='ROLE_ADMIN')),
+      tap(canUpdateRoles => { this.canUpdateRoles = canUpdateRoles; }),
     );
   }
 

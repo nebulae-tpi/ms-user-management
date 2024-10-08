@@ -10,7 +10,7 @@ import { MatSnackBar } from '@angular/material';
 import { User } from './../model/user.model';
 import { UserFormService } from './user-form.service';
 import { ToolbarService } from '../../../toolbar/toolbar.service';
-
+import { KeycloakService } from "keycloak-angular";
 
 ////////// RXJS //////////
 // tslint:disable-next-line:import-blacklist
@@ -37,7 +37,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
   selectedUserRoles: any;
   roles = [];
   userRoles = [];
-
+  canUpdateRoles: Boolean = false;
   paramBusinessId: any;
   paramId: any;
 
@@ -45,6 +45,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
     private translationLoader: FuseTranslationLoaderService,
     private translate: TranslateService,
     private userFormService: UserFormService,
+    private keycloakService: KeycloakService,
     private userManagementService: UserManagementService,
     private formBuilder: FormBuilder,
     public snackBar: MatSnackBar,
@@ -59,6 +60,7 @@ export class UserFormComponent implements OnInit, OnDestroy {
     //this.user = new User(this.router.snapshot.data.data ? this.router.snapshot.data.data.data.getUser : undefined);
     this.pageType = this.user._id ? 'edit' : 'new';
     this.userGeneralInfoForm = this.createUserGeneralInfoForm();
+    this.checkIfUserCanUpdateRoles$().subscribe();
     this.userAuthForm = this.createUserAuthForm();
     this.userStateForm = this.createUserStateForm();
     this.userRolesForm = this.createUserRolesForm();
@@ -66,6 +68,14 @@ export class UserFormComponent implements OnInit, OnDestroy {
     this.findUser();
 
   }
+
+  checkIfUserCanUpdateRoles$() {
+    return of(this.keycloakService.getUserRoles(true)).pipe(
+      map(userRoles => userRoles.some(role => role === 'PLATFORM-ADMIN' || role ==='ROLE_ADMIN')),
+      tap(canUpdateRoles => { this.canUpdateRoles = canUpdateRoles; }),
+    );
+  }
+
 
   getBusinessFiltered$(filterText: String, limit: number): Observable<any[]> {
     return this.userManagementService.getBusinessByFilter(filterText, limit).pipe(
