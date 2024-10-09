@@ -72,7 +72,9 @@ export const locale = {
         'OPERATOR': 'Operador',
         'COORDINATOR': 'Coordinador',
         'DISCIPLINARY-COMMITTEE': 'Comité Disciplinario',
-        'OPERATION-SUPERVISOR': 'Supervisor de operaciones'
+        'OPERATION-SUPERVISOR': 'Supervisor de operaciones',
+        'ROLE_ADMIN': 'Administador de roles',
+        'LICENSE_PLATE_WRITE': 'Modificador de Placas'
       },
       CLOSE: 'Cerrar',
       RESET_PASSWORD: 'Restablecer contraseña'
