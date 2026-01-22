@@ -6,7 +6,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 
 const eventSourcing = require('./tools/EventSourcing')();
-const eventStoreService = require('./services/event-store-tpi/EventStoreService')();
+const eventStoreService = require('./services/event-store/EventStoreService')();
 const mongoDB = require('./data/MongoDB').singleton();
 const KeycloakDA = require('./data/KeycloakDA').singleton();
 const UserDA = require('./data/UserDA');
