@@ -27,7 +27,7 @@ class BrokerFactory {
      * Get the broker instance
      */
     getBroker() {
-        return broker
+        return this.broker
     }
 }
 

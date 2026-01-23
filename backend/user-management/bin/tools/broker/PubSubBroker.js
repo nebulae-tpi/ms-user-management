@@ -19,7 +19,7 @@ class PubSubBroker {
         this.verifiedTopics = {};
         this.listeningTopics = {};
 
-        const PubSub = require('@google-cloud/pubsub');
+        const {PubSub} = require('@google-cloud/pubsub');
         this.pubsubClient = new PubSub({
         });
     }
