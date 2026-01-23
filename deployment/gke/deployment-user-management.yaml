@@ -1,31 +1,28 @@
-apiVersion: apps/v1 # for versions before 1.9.0 use apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
+  annotations:
   name: user-management
+  namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: user-management
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
   template:
     metadata:
       labels:
         app: user-management
-    spec:      
+    spec:
       containers:
-      - image: DOCKERHUB/user-management.backend.user-management:0.0.30
-        name: user-management
-        volumeMounts:
-        - name: google-application-credentials
-          mountPath: "/etc/GOOGLE_APPLICATION_CREDENTIALS"
-          readOnly: true
-        resources:
-          requests:
-            cpu: "50m"
-        env:     
-        # EVENT STORE CONFIG 
+      - env:
         - name: GOOGLE_APPLICATION_CREDENTIALS
-          value: /etc/GOOGLE_APPLICATION_CREDENTIALS/gcloud-service-key.json  
+          value: /etc/GOOGLE_APPLICATION_CREDENTIALS/gcloud-service-key.json
         - name: EVENT_STORE_BROKER_TYPE
           value: PUBSUB
         - name: EVENT_STORE_BROKER_EVENTS_TOPIC
@@ -33,60 +30,83 @@ spec:
         - name: EVENT_STORE_STORE_TYPE
           value: MONGO
         - name: EVENT_STORE_STORE_URL
-          value: mongodb://dbevents-0.dbevents:27017,dbevents-1.dbevents:27017,dbevents-2.dbevents:27017/test?replicaSet=rs0
+          valueFrom:
+            secretKeyRef:
+              key: usrl
+              name: dbevents-user
         - name: EVENT_STORE_STORE_AGGREGATES_DB_NAME
           value: Aggregates
         - name: EVENT_STORE_STORE_EVENTSTORE_DB_NAME
           value: EventStore
-        # INTERNAL MONGO DB CONFIG
         - name: MONGODB_URL
           value: mongodb://user-mgmt-mongo:27017
         - name: MONGODB_DB_NAME
           value: user-management
-        # JWT CONGIF        
         - name: JWT_PUBLIC_KEY
           valueFrom:
             configMapKeyRef:
-              name: keycloak-jwt-public-key
               key: jwt_public_key
-          #value: -----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyGMYfhPX7A5kAaBh9smoyDhj7Ilv0YfsPygnkEUDu44teqPzZhNjoLnAyDED3J7AhGJpOHlSzfC+7jrXXbUVczTP7vhH1pa1RXX4TIhzqo5R9NNKhREK39s6gezsP6SbCfu1XvaT1TVPEPBHho8q3qyICWFtoWTtx1tkk99jFz6zFFeIU2sTVAuf9+q1bawuHY42yU66/iaBP3zEtqLjtl7OO9z8wnIlaHW8zo20taFPeQy5xbmUaVUfEwQ6zoJCcSU2W79r2gFPWSfsXCJ07nfZIl0aWnOV7tRJLkJWsOL6EgFIh3P2v9d/SmLEVpje7kiibVUFqMg7ipRrruMzdwIDAQAB\n-----END PUBLIC KEY-----
-        # API - gateway CONFIG
+              name: keycloak-jwt-public-key
         - name: gateway_REPLIES_TOPIC_SUBSCRIPTION
           value: emi-gateway-replies-topic-mbe-user-management
         - name: REPLY_TIMEOUT
-          value: '2000'
+          value: "2000"
         - name: BROKER_TYPE
-          value: PUBSUB        
-        # RESET LOCK INITIALIZE BACKED
+          value: PUBSUB
         - name: LOCKVERSION
-          value: "initial_lock"
-        # KEYCLOAK BACKEND
+          value: initial_lock
         - name: KEYCLOAK_BACKEND_BASE_URL
           valueFrom:
             configMapKeyRef:
-              name: environment-variables
               key: keycloak-backend-base-url
-          #value: "https://tpi-dev.nebulae.com.co/auth"
+              name: environment-variables
         - name: KEYCLOAK_BACKEND_USER
           valueFrom:
             secretKeyRef:
-              name: keycloak
               key: keycloak_backend_user
+              name: keycloak
         - name: KEYCLOAK_BACKEND_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: keycloak
               key: keycloak_backend_password
+              name: keycloak
         - name: USER_ROLES_ALLOW_TO_ASSIGN
-          value: '{"BUSINESS-ADMIN": ["ROLE_ADMIN", "LICENSE_PLATE_WRITE", "BUSINESS-OWNER", "OPERATOR", "COORDINATOR", "DISCIPLINARY-COMMITTEE", "OPERATION-SUPERVISOR", "POS", "POI"], "BUSINESS-OWNER": ["BUSINESS-OWNER", "OPERATOR", "COORDINATOR", "DISCIPLINARY-COMMITTEE", "OPERATION-SUPERVISOR", "POS", "POI"], "PLATFORM-ADMIN": ["ROLE_ADMIN", "LICENSE_PLATE_WRITE", "PLATFORM-ADMIN", "BUSINESS-OWNER", "OPERATOR", "COORDINATOR", "DISCIPLINARY-COMMITTEE", "OPERATION-SUPERVISOR", "POS", "POI"]}'
+          value: '{"BUSINESS-ADMIN": ["ROLE_ADMIN", "LICENSE_PLATE_WRITE", "BUSINESS-OWNER",
+            "OPERATOR", "COORDINATOR", "DISCIPLINARY-COMMITTEE", "OPERATION-SUPERVISOR",
+            "POS", "POI"], "BUSINESS-OWNER": ["BUSINESS-OWNER", "OPERATOR", "COORDINATOR",
+            "DISCIPLINARY-COMMITTEE", "OPERATION-SUPERVISOR", "POS", "POI"], "PLATFORM-ADMIN":
+            ["ROLE_ADMIN", "LICENSE_PLATE_WRITE", "PLATFORM-ADMIN", "BUSINESS-OWNER",
+            "OPERATOR", "COORDINATOR", "DISCIPLINARY-COMMITTEE", "OPERATION-SUPERVISOR",
+            "POS", "POI"]}'
         - name: ROLE_FIRST_USER_ASSIGN
           value: '{"roles": ["BUSINESS-OWNER"]}'
         - name: KEYCLOAK_BACKEND_CLIENT_ID
-          value: "admin-cli"
+          value: admin-cli
         - name: KEYCLOAK_BACKEND_REALM_NAME
-          value: "TPI"        
+          value: TPI
+        image: nebulaetpiprod/user-management.backend.user-management:0.0.30
+        imagePullPolicy: IfNotPresent
+        name: user-management
+        resources:
+          requests:
+            cpu: 50m
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/GOOGLE_APPLICATION_CREDENTIALS
+          name: google-application-credentials
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
       volumes:
       - name: google-application-credentials
         secret:
+          defaultMode: 420
           secretName: google-application-credentials
-      
+      - name: dbevents-user
+        secret:
+          defaultMode: 420
+          secretName: dbevents-user
