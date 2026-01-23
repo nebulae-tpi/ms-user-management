@@ -19,9 +19,12 @@ class PubSubBroker {
         this.verifiedTopics = {};
         this.listeningTopics = {};
 
-        const {PubSub} = require('@google-cloud/pubsub');
-        this.pubsubClient = new PubSub({
-        });
+        
+        // @google-cloud/pubsub usa destructuring: const {PubSub} = require('@google-cloud/pubsub')
+        const pubsubModule = require('@google-cloud/pubsub');
+        const PubSub = pubsubModule.PubSub || pubsubModule; // exporta {PubSub}, pero por compatibilidad puede exportar directamente
+        
+        this.pubsubClient = new PubSub();
     }
 
     /**
@@ -110,11 +113,14 @@ class PubSubBroker {
                     ({ topicName, subsription, subscriptionName }) => {
                         this.listeningTopics[topicName] = subscriptionName;
                         subsription.on(`message`, message => {
-                            // console.log(`Received message ${message.id}:`);
+                            // message.data es un Buffer, se convierte a string antes de parsear
+                            const messageData = message.data instanceof Buffer 
+                                ? JSON.parse(message.data.toString())
+                                : JSON.parse(message.data);
                             this.incomingMessages$.next(
                                 {
                                     id: message.id,
-                                    data: JSON.parse(message.data),
+                                    data: messageData,
                                     attributes: message.attributes,
                                     correlationId: message.attributes.correlationId,
                                     topic: topicName,
@@ -162,7 +168,6 @@ class PubSubBroker {
                     if (exists) {
                         //if it does exists, then store it on the cache and return it
                         this.verifiedTopics[topicName] = topic;
-                        console.log(`Topic ${topicName} already existed and has been set into the cache`);
                         return Rx.Observable.of(topic);
                     } else {
                         //if it does NOT exists, then create it, store it in the cache and return it
@@ -180,10 +185,23 @@ class PubSubBroker {
      * @param {string} topicName 
      */
     createTopic$(topicName) {
+        // createTopic retorna [topic, apiResponse]
         return Rx.Observable.fromPromise(this.pubsubClient.createTopic(topicName))
-            .switchMap(data => {
-                this.verifiedTopics[topicName] = this.pubsubClient.topic(topicName);
-                return Rx.Observable.of(this.verifiedTopics[topicName]);
+            .switchMap(results => {
+                // results[0] es el topic creado
+                const topic = results[0];
+                this.verifiedTopics[topicName] = topic;
+                return Rx.Observable.of(topic);
+            })
+            .catch(error => {
+                // Si el topic ya existe (error 6 ALREADY_EXISTS), obtener el topic existente
+                if (error.code === 6 || (error.message && error.message.includes('ALREADY_EXISTS'))) {
+                    const topic = this.pubsubClient.topic(topicName);
+                    this.verifiedTopics[topicName] = topic;
+                    return Rx.Observable.of(topic);
+                }
+                // Si es otro error, propagarlo
+                return Rx.Observable.throw(error);
             });
     }
 
@@ -197,16 +215,24 @@ class PubSubBroker {
     */
     publish$(topic, type, data, { correlationId } = {}) {
         const dataBuffer = Buffer.from(JSON.stringify(data));
-        return Rx.Observable.fromPromise(
-            topic.publisher().publish(
-                dataBuffer,
-                {
-                    type,
-                    senderId: this.senderId,
-                    correlationId
-                }))
-            //.do(messageId => console.log(`Message published through ${topic.name}, MessageId=${messageId}`))
-            ;
+        const attributes = {
+            type,
+            senderId: this.senderId,
+            correlationId: correlationId || ''
+        };
+        
+        
+        if (typeof topic.publish === 'function') {
+            // API
+            return Rx.Observable.fromPromise(
+                topic.publish(dataBuffer, attributes));
+        } else if (typeof topic.publisher === 'function') {
+            
+            return Rx.Observable.fromPromise(
+                topic.publisher().publish(dataBuffer, attributes));
+        } else {
+            return Rx.Observable.throw(new Error('Topic does not support publish() or publisher()'));
+        }
     }
 
     /**
@@ -216,10 +242,33 @@ class PubSubBroker {
      */
     getSubscription$(topicName, subscriptionName) {
         return this.getTopic$(topicName)
-            .switchMap(topic => Rx.Observable.fromPromise(
-                topic.subscription(subscriptionName)
-                    .get({ autoCreate: true }))
-            ).map(results => results[0]);
+            .switchMap(topic => {
+               
+                // topic.subscription(name).get({ autoCreate: true })
+                // pubsubClient.subscription(name).get({ autoCreate: true })
+                let subscription;
+                if (topic.subscription) {
+                   
+                    subscription = topic.subscription(subscriptionName);
+                } else {
+                    
+                    subscription = this.pubsubClient.subscription(subscriptionName);
+                }
+                
+                // Verifica si existe, si no, crea
+                return Rx.Observable.fromPromise(subscription.get({ autoCreate: true }))
+                    .map(results => Array.isArray(results) ? results[0] : results)
+                    .catch(error => {
+                        // Si la suscripción no existe y autoCreate falló, intentar crearla manualmente
+                        if (error.code === 5 || (error.message && error.message.includes('NOT_FOUND'))) {
+                            return Rx.Observable.fromPromise(
+                                topic.createSubscription(subscriptionName)
+                                    .then(results => Array.isArray(results) ? results[0] : results)
+                            );
+                        }
+                        return Rx.Observable.throw(error);
+                    });
+            });
     }
 
     /**
@@ -227,7 +276,7 @@ class PubSubBroker {
      */
     disconnectBroker() {
         return Rx.Observable.create((observer) => {
-            Rx.Observable.from(Object.entries(listeningTopics))
+            Rx.Observable.from(Object.entries(this.listeningTopics))
                 .mergeMap(([topicName, subscriptionName]) => this.getSubscription$(topicName, subscriptionName))
                 .subscribe(
                     (subscription) => {
